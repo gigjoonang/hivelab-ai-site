@@ -238,11 +238,12 @@
     }
 
     /* 굴절(액체 유리)은 backdrop-filter: url() 을 쓰는데 크롬 계열에서만 돈다.
-       사파리와 아이폰은 위 규칙이 그대로 나가는데, 굴절이 화면을 어둡게 눌러주는 몫이
-       빠지면서 밝은 사진 위에서 연회색 판처럼 떠 보였다. 그만큼 더 깔아 밝기를 맞춘다.
-       계산값은 흰머리(0.75) 위에서 PC 0.25, 여기 0.29 */
+       사파리와 아이폰은 이 규칙이 대신 나간다.
+       반투명이면 뒤 사진이 그대로 비쳐서, 펼쳤을 때 위 줄(머리카락)과
+       아래 직군 줄(금색 옷깃)의 배경이 따로 놀았다. 거의 안 비치게 덮어
+       접든 펼치든, 어느 자리에 있든 같은 판으로 보이게 한다 */
     .gnb-glass:not(.is-liquid) {
-      background: rgba(0, 0, 0, 0.62);
+      background: rgba(17, 17, 17, 0.92);
     }
 
     .gnb-glass.is-liquid {
@@ -1494,6 +1495,17 @@
         transition: transform var(--expand);
       }
       #app.is-nav-open .sidebar { transform: none; }
+
+      /* 서랍이 GNB 뒤에 깔려 있었다. #page-03 이 쌓임 맥락이라서
+         안에 있는 서랍은 아무리 올려도 바(z-index 60)를 못 넘는다.
+         열려 있는 동안 지도 화면째로 바 앞에 올린다.
+         가림막도 같이 올라가서 바까지 덮는다 = 서랍 뒤가 전부 딤 */
+      #app.is-nav-open #page-03 { z-index: 70; }
+      /* 하위 메뉴 왼쪽 세로선과 현재 위치 표시 흰 선을 뺀다.
+         지금 보고 있는 항목은 배경 강조로 충분히 보인다 */
+      .submenu::before,
+      .submenu-mark { display: none; }
+
       .sidebar-scroll {
         overscroll-behavior: contain;
         -webkit-overflow-scrolling: touch;
@@ -1503,6 +1515,14 @@
       .gnb-search input { font-size: 12px; }
 
       .role-chip { padding: 3px 10px; }
+
+      /* 아이폰 사파리는 글자 16px 미만인 입력칸을 누르면 화면을 확대한다.
+         이 칸은 직군 이름을 보여주기만 하는 읽기 전용이라 아예 안 눌리게 두고,
+         펼치는 건 바 전체 클릭이 맡는다 */
+      .gnb-search input { pointer-events: none; }
+
+      /* 두 번 톡톡 쳐서 확대되는 것도 막는다 */
+      .gnb, .sidebar, .main-panel { touch-action: manipulation; }
 
       /* 표가 480px 아래로 안 줄어들어서 오른쪽이 잘린 채 보였다.
          폭에 맞춰 줄이고 글자가 줄바꿈되게 푼다. 행은 길어져도 다 보인다 */
@@ -2296,8 +2316,9 @@ window.GUIDE_PAGES = {"setup":"<div class=\"eyebrow\">INSTALL</div>\n  <h1>설�
       e.preventDefault();
       const value = input.value.trim();
       if (!value) {
+        /* 읽기 전용 칸이라 포커스를 줘도 할 게 없다.
+           아이폰에서는 포커스만으로 화면이 확대돼서 아예 주지 않는다 */
         openRoles();
-        input.focus();
         return;
       }
       goToMap(value);
