@@ -251,13 +251,16 @@
       overflow: hidden;
       pointer-events: none;
       z-index: 0;
-      /* 반투명이면 뒤에 뭐가 있느냐에 따라 박스 색이 달라진다. 접었을 때와
-         펼쳤을 때 바가 덮는 자리가 달라서 같은 박스가 다르게 보였다.
-         뒤가 안 비치는 단색으로 고정해 어느 상태에서도 같은 박스가 되게 한다 */
-      background: #161616;
+      background: rgba(0, 0, 0, 0.36);
       border: 1px solid rgba(255, 255, 255, 0.24);
       backdrop-filter: blur(16px) saturate(160%);
       -webkit-backdrop-filter: blur(16px) saturate(160%);
+    }
+
+    /* 굴절(액체 유리)은 backdrop-filter: url() 을 쓰는데 크롬 계열에서만 돈다.
+       굴절이 안 도는 쪽은 반투명이 그대로 비쳐서 회색 판처럼 떠 보인다 */
+    .gnb-glass:not(.is-liquid) {
+      background: #161616;
     }
 
     .gnb-glass.is-liquid {
@@ -1530,6 +1533,10 @@
       .gnb-search input { font-size: 12px; }
 
       .role-chip { padding: 3px 10px; }
+
+      /* 휴대폰은 단색 고정. 반투명이면 접었을 때와 펼쳤을 때
+         바가 덮는 사진 자리가 달라져서 같은 박스가 다르게 보인다 */
+      .gnb-glass { background: #161616; }
 
       /* 아이폰 사파리는 글자 16px 미만인 입력칸을 누르면 화면을 확대한다.
          이 칸은 직군 이름을 보여주기만 하는 읽기 전용이라 아예 안 눌리게 두고,
