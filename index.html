@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <!-- 사파리가 위아래 바를 페이지 색으로 칠하게 한다 -->
   <meta name="theme-color" content="#111111" />
+  <!-- 홈 화면에 추가해서 열면 사파리 바가 없어지고 화면 끝까지 쓴다 -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Design AI Map" />
   <!-- 사내용 문서. 주소를 아는 사람만 보게 하고 검색엔진에는 안 걸리게 한다 -->
   <meta name="robots" content="noindex, nofollow" />
   <title>HIVELAB Design AI Map</title>
@@ -142,10 +146,11 @@
        (상태바 뒤, 툴바 뒤까지)에 깔아 위아래가 잘리지 않게 한다 */
     .hero {
       position: fixed;
-      top: 0;
-      left: 0;
-      inset: auto;
+      /* 위·왼쪽만 0 으로 박고 나머지는 풀어 크기로 잡는다.
+         inset 을 top/left 뒤에 쓰면 둘을 도로 지운다 */
+      inset: 0 auto auto 0;
       width: 100%;
+      /* 100lvh = 주소창이 접혔을 때 기준 높이. 툴바 뒤까지 덮는다 */
       height: 100vh;
       height: 100lvh;
     }
@@ -2195,6 +2200,19 @@ window.GUIDE_PAGES = {"setup":"<div class=\"eyebrow\">INSTALL</div>\n  <h1>설�
 
     const app = document.getElementById("app");
 
+    /* 사파리는 위아래 바를 이 색으로 칠한다. 탭으로 열었을 때는 그 자리에
+       페이지를 그릴 수 없으니 색이라도 맞춰서 잘린 것처럼 안 보이게 한다.
+       #98979a 는 인물 사진에서 화면 맨 위에 걸리는 부분의 평균색 */
+    const themeMeta = document.querySelector('meta[name="theme-color"]');
+    function syncThemeColor() {
+      if (!themeMeta) return;
+      themeMeta.setAttribute(
+        "content",
+        app.classList.contains("is-map") ? "#111111" : "#98979a"
+      );
+    }
+    syncThemeColor();
+
     /* 모바일 메뉴 서랍 */
     (function () {
       const btn = document.getElementById("nav-toggle");
@@ -2303,6 +2321,7 @@ window.GUIDE_PAGES = {"setup":"<div class=\"eyebrow\">INSTALL</div>\n  <h1>설�
       roleLabel.textContent = resolved.name;
       closeRoles();
       app.classList.add("is-map");
+      syncThemeColor();
       showPage("setup");
       watchGlassDuringMove(COVER_MS);
       requestAnimationFrame(spyPbar);
@@ -2313,6 +2332,7 @@ window.GUIDE_PAGES = {"setup":"<div class=\"eyebrow\">INSTALL</div>\n  <h1>설�
       if (navLock) return;
       navLock = true;
       app.classList.remove("is-map");
+      syncThemeColor();
       input.value = "";
       closeRoles();
       watchGlassDuringMove(COVER_MS);
