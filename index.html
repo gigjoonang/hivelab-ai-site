@@ -1449,7 +1449,11 @@
       position: absolute;
       inset: 0;
       z-index: 40;
-      background: rgba(0, 0, 0, 0.55);
+      /* 가이드 화면은 바탕이 원래 거의 검정이라 옅게 깔면 딤이 안 보인다.
+         진하게 깔고 흐리게까지 해서 뒤로 확실히 물러나 보이게 한다 */
+      background: rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
       opacity: 0;
       pointer-events: none;
       /* 닫혀 있을 때는 그리지도 않는다. 투명도만 0 으로 두면 브라우저에 따라
@@ -1485,10 +1489,11 @@
         /* bottom:0 대신 100dvh. 모바일 브라우저 주소창이 접혔다 펴질 때
            바닥이 잘려서 마지막 메뉴를 못 누르는 걸 막는다 */
         height: 100dvh;
-        padding: calc(var(--header-h) + 34px) 14px
+        /* 서랍이 바 앞으로 나오면서 위쪽 60px 을 비워둘 이유가 없어졌다.
+           메뉴를 화면 위쪽부터 시작한다 */
+        padding: calc(22px + env(safe-area-inset-top, 0px)) 14px
                  calc(28px + env(safe-area-inset-bottom, 0px));
         background: var(--page);
-        border-right: 1px solid var(--line);
         /* 스크롤은 안쪽 .sidebar-scroll 하나만 맡는다 */
         overflow: hidden;
         transform: translateX(-100%);
