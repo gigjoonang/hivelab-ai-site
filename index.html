@@ -84,11 +84,11 @@
     }
 
     /* 사파리 위아래 바 자리를 칠하는 색. 페이지는 그 자리에 못 그리지만
-       색은 여기서 정해진다. 홈에서는 사진 위쪽 평균색(#98979a)이라
+       색은 여기서 정해진다. 홈에서는 사진 위쪽 평균색(#99989b)이라
        사진이 이어지는 것처럼 보이고, 가이드 화면에서는 본문 바탕색으로 바뀐다 */
     html {
       background:
-        #98979a
+        #99989b
         url("assets/character-01.webp") center 22% / cover no-repeat;
     }
 
@@ -153,6 +153,31 @@
 
     .map-layout.has-toc {
       grid-template-columns: var(--sidebar) minmax(0, 1fr) var(--toc);
+    }
+
+    /* 상태바 자리에는 사진을 못 그린다. 거긴 단색으로 칠할 수밖에 없는데,
+       그 바로 아래 사진을 흐리게 만들어서 단색 띠와 이어져 보이게 한다.
+       아래로 갈수록 흐림이 풀려 원래 사진으로 돌아간다 */
+    .top-haze {
+      /* PC 는 위에 가려지는 바가 없으니 이 처리가 필요 없다. 좁은 화면에서만 켠다 */
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 86px;
+      z-index: 20;
+      pointer-events: none;
+      backdrop-filter: blur(18px) saturate(112%);
+      -webkit-backdrop-filter: blur(18px) saturate(112%);
+      -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 38%, transparent 100%);
+      mask-image: linear-gradient(to bottom, #000 0%, #000 38%, transparent 100%);
+      transition: opacity var(--cover);
+    }
+
+    /* 가이드 화면은 바탕이 단색이라 흐릴 게 없다 */
+    #app.is-map .top-haze {
+      opacity: 0;
     }
 
     /* ===== SHARED GNB ===== */
@@ -1528,6 +1553,8 @@
 
       .role-chip { padding: 3px 10px; }
 
+      .top-haze { display: block; }
+
       /* 아이폰 사파리는 글자 16px 미만인 입력칸을 누르면 화면을 확대한다.
          이 칸은 직군 이름을 보여주기만 하는 읽기 전용이라 아예 안 눌리게 두고,
          펼치는 건 바 전체 클릭이 맡는다 */
@@ -1657,6 +1684,8 @@
            바깥에 두면 z-index 와 상관없이 서랍 메뉴 위를 덮어버린다 -->
       <div class="nav-scrim" id="nav-scrim" hidden></div>
     </section>
+
+    <div class="top-haze" aria-hidden="true"></div>
 
     <div class="gnb-layer">
       <form class="gnb" id="gnb" autocomplete="off">
@@ -2191,13 +2220,13 @@ window.GUIDE_PAGES = {"setup":"<div class=\"eyebrow\">INSTALL</div>\n  <h1>설�
 
     /* 사파리는 위아래 바를 이 색으로 칠한다. 탭으로 열었을 때는 그 자리에
        페이지를 그릴 수 없으니 색이라도 맞춰서 잘린 것처럼 안 보이게 한다.
-       #98979a 는 인물 사진에서 화면 맨 위에 걸리는 부분의 평균색 */
+       #99989b 는 인물 사진에서 화면 맨 위에 걸리는 부분의 평균색 */
     const themeMeta = document.querySelector('meta[name="theme-color"]');
     function syncThemeColor() {
       const onMap = app.classList.contains("is-map");
       document.documentElement.classList.toggle("on-map", onMap);
       if (!themeMeta) return;
-      themeMeta.setAttribute("content", onMap ? "#111111" : "#98979a");
+      themeMeta.setAttribute("content", onMap ? "#111111" : "#99989b");
     }
     syncThemeColor();
 
