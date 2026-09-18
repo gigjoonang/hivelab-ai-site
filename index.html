@@ -78,7 +78,9 @@
        색은 여기서 정해진다. 홈에서는 사진 위쪽 평균색(#98979a)이라
        사진이 이어지는 것처럼 보이고, 가이드 화면에서는 본문 바탕색으로 바뀐다 */
     html {
-      background: #98979a;
+      background:
+        #98979a
+        url("assets/character-01.webp") center 22% / cover no-repeat fixed;
     }
 
     html.on-map {
@@ -86,8 +88,8 @@
     }
 
     body {
-      /* 사파리 툴바 뒤로 비치는 색. 본문 바탕과 같게 둔다 */
-      background: var(--page);
+      /* 배경은 최상위(html)가 맡는다. 여기서 덮으면 사진이 가려진다 */
+      background: transparent;
       font-family: Pretendard, "Apple SD Gothic Neo", sans-serif;
       font-size: 13px;
       color: var(--white);
@@ -143,36 +145,6 @@
     .map-layout.has-toc {
       grid-template-columns: var(--sidebar) minmax(0, 1fr) var(--toc);
     }
-
-    .hero,
-    .hero img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    /* #app 은 100dvh 라 사파리 툴바가 가린 만큼은 포함하지 않는다.
-       그 바깥은 body 배경(검정)이 그대로 보였다. 사진만 따로 화면 전체
-       (상태바 뒤, 툴바 뒤까지)에 깔아 위아래가 잘리지 않게 한다 */
-    .hero {
-      position: fixed;
-      /* 위·왼쪽만 0 으로 박고 나머지는 풀어 크기로 잡는다.
-         inset 을 top/left 뒤에 쓰면 둘을 도로 지운다 */
-      inset: 0 auto auto 0;
-      width: 100%;
-      /* 100lvh = 주소창이 접혔을 때 기준 높이. 툴바 뒤까지 덮는다 */
-      height: 100vh;
-      height: 100lvh;
-    }
-
-    .hero img {
-      object-fit: cover;
-      object-position: center 28%;
-      pointer-events: none;
-    }
-
-    .hero-character { object-position: center 22%; }
 
     /* ===== SHARED GNB ===== */
     .gnb-layer {
@@ -1664,9 +1636,6 @@
 
   <div id="app">
     <section class="page" id="page-01" aria-label="메인">
-      <div class="hero">
-        <img class="hero-character" src="assets/character-01.webp" alt="" />
-      </div>
     </section>
 
     <section class="page" id="page-03" aria-label="Design AI Map">
