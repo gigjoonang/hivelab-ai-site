@@ -74,6 +74,17 @@
       overflow: hidden;
     }
 
+    /* 사파리 위아래 바 자리를 칠하는 색. 페이지는 그 자리에 못 그리지만
+       색은 여기서 정해진다. 홈에서는 사진 위쪽 평균색(#98979a)이라
+       사진이 이어지는 것처럼 보이고, 가이드 화면에서는 본문 바탕색으로 바뀐다 */
+    html {
+      background: #98979a;
+    }
+
+    html.on-map {
+      background: var(--page);
+    }
+
     body {
       /* 사파리 툴바 뒤로 비치는 색. 본문 바탕과 같게 둔다 */
       background: var(--page);
@@ -2205,11 +2216,10 @@ window.GUIDE_PAGES = {"setup":"<div class=\"eyebrow\">INSTALL</div>\n  <h1>설�
        #98979a 는 인물 사진에서 화면 맨 위에 걸리는 부분의 평균색 */
     const themeMeta = document.querySelector('meta[name="theme-color"]');
     function syncThemeColor() {
+      const onMap = app.classList.contains("is-map");
+      document.documentElement.classList.toggle("on-map", onMap);
       if (!themeMeta) return;
-      themeMeta.setAttribute(
-        "content",
-        app.classList.contains("is-map") ? "#111111" : "#98979a"
-      );
+      themeMeta.setAttribute("content", onMap ? "#111111" : "#98979a");
     }
     syncThemeColor();
 
