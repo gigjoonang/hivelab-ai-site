@@ -74,13 +74,22 @@
       overflow: hidden;
     }
 
+    /* 배경이 사파리 하단 툴바 뒤까지 이어지게 한다.
+       height:100% 는 툴바를 뺀 높이라 배경이 툴바 위에서 끊겼다.
+       100lvh = 주소창이 접혔을 때 기준, 즉 화면 전체 높이.
+       #app 은 아래에서 100dvh 로 두니까 버튼과 바는 툴바 위에 그대로 있다 */
+    html, body {
+      height: 100vh;
+      height: 100lvh;
+    }
+
     /* 사파리 위아래 바 자리를 칠하는 색. 페이지는 그 자리에 못 그리지만
        색은 여기서 정해진다. 홈에서는 사진 위쪽 평균색(#98979a)이라
        사진이 이어지는 것처럼 보이고, 가이드 화면에서는 본문 바탕색으로 바뀐다 */
     html {
       background:
         #98979a
-        url("assets/character-01.webp") center 22% / cover no-repeat fixed;
+        url("assets/character-01.webp") center 22% / cover no-repeat;
     }
 
     html.on-map {
