@@ -231,19 +231,13 @@
       overflow: hidden;
       pointer-events: none;
       z-index: 0;
-      background: rgba(0, 0, 0, 0.36);
+      /* 반투명이면 뒤에 뭐가 있느냐에 따라 박스 색이 달라진다. 접었을 때와
+         펼쳤을 때 바가 덮는 자리가 달라서 같은 박스가 다르게 보였다.
+         뒤가 안 비치는 단색으로 고정해 어느 상태에서도 같은 박스가 되게 한다 */
+      background: #161616;
       border: 1px solid rgba(255, 255, 255, 0.24);
       backdrop-filter: blur(16px) saturate(160%);
       -webkit-backdrop-filter: blur(16px) saturate(160%);
-    }
-
-    /* 굴절(액체 유리)은 backdrop-filter: url() 을 쓰는데 크롬 계열에서만 돈다.
-       사파리와 아이폰은 이 규칙이 대신 나간다.
-       반투명이면 뒤 사진이 그대로 비쳐서, 펼쳤을 때 위 줄(머리카락)과
-       아래 직군 줄(금색 옷깃)의 배경이 따로 놀았다. 거의 안 비치게 덮어
-       접든 펼치든, 어느 자리에 있든 같은 판으로 보이게 한다 */
-    .gnb-glass:not(.is-liquid) {
-      background: rgba(17, 17, 17, 0.92);
     }
 
     .gnb-glass.is-liquid {
@@ -1494,6 +1488,7 @@
         padding: calc(22px + env(safe-area-inset-top, 0px)) 14px
                  calc(28px + env(safe-area-inset-bottom, 0px));
         background: var(--page);
+        border-right: 1px solid var(--line);
         /* 스크롤은 안쪽 .sidebar-scroll 하나만 맡는다 */
         overflow: hidden;
         transform: translateX(-100%);
