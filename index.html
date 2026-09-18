@@ -393,15 +393,22 @@
 
     .role-chips-inner {
       min-height: 0;
-      overflow: hidden;
       display: flex;
-      flex-flow: row wrap;
+      /* 줄바꿈하면 --chips-h(42px) 계산이 어긋나서 바 높이가 틀어진다.
+         좁은 화면에서도 PC 처럼 한 줄로 두고 모자라면 옆으로 민다 */
+      flex-flow: row nowrap;
       align-items: center;
       gap: 6px;
       padding: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
     }
+    .role-chips-inner::-webkit-scrollbar { display: none; }
 
     .role-chip {
+      flex: none;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -1402,12 +1409,76 @@
       .panel-content h1 { font-size: 24px; }
     }
 
+    /* 모바일 메뉴 버튼: 좁은 화면의 지도 화면에서만 나온다 */
+    .nav-toggle {
+      display: none;
+      flex: none;
+      width: 30px;
+      height: 30px;
+      margin-right: -2px;
+      padding: 0;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      cursor: pointer;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 16px;
+      height: 1.5px;
+      border-radius: 2px;
+      background: var(--white);
+      transition: transform var(--fast), opacity var(--fast);
+    }
+    #app.is-nav-open .nav-toggle span:nth-child(1) { transform: translateY(5.5px) rotate(45deg); }
+    #app.is-nav-open .nav-toggle span:nth-child(2) { opacity: 0; }
+    #app.is-nav-open .nav-toggle span:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
+
+    .nav-scrim {
+      position: absolute;
+      inset: 0;
+      z-index: 40;
+      background: rgba(0, 0, 0, 0.55);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--fast);
+    }
+    #app.is-nav-open .nav-scrim { opacity: 1; pointer-events: auto; }
+
     @media (max-width: 640px) {
       .map-layout,
       .map-layout.has-toc { grid-template-columns: 1fr; }
-      .sidebar { display: none; }
       .pbar-now, .pbar-sep { display: none; }
       .pbar-in { padding: 10px 14px; }
+      #app.is-map .nav-toggle { display: flex; }
+      .gnb-layer { z-index: 60; }
+      /* 메뉴 버튼이 들어온 만큼 자리를 내준다. 안 그러면 우측 홈 버튼이 잘린다 */
+      #app.is-map .gnb .brand { display: none; }
+
+      /* 사이드바를 숨기지 않고 서랍으로 돌린다.
+         메뉴 생김새(아이콘·꺾쇠·호버 박스)는 PC 랑 똑같이 둔다 */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 50;
+        width: 268px;
+        max-width: 84vw;
+        padding: calc(var(--header-h) + 34px) 14px 24px;
+        background: var(--page);
+        border-right: 1px solid var(--line);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        transform: translateX(-100%);
+        transition: transform var(--expand);
+      }
+      #app.is-nav-open .sidebar { transform: none; }
+      .gnb-search input { font-size: 12px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1505,7 +1576,6 @@
   <div id="app">
     <section class="page" id="page-01" aria-label="메인">
       <div class="hero">
-        <img class="hero-bg" src="assets/bg-01.png" alt="" />
         <img class="hero-character" src="assets/character-01.png" alt="" />
       </div>
     </section>
@@ -1522,6 +1592,9 @@
       <form class="gnb" id="gnb" autocomplete="off">
         <div class="gnb-glass"></div>
         <div class="gnb-main">
+          <button class="nav-toggle" type="button" id="nav-toggle" aria-label="메뉴 열기" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
           <img class="logo" src="assets/logo.svg" alt="HIVELAB" id="gnb-logo" />
           <span class="brand" id="gnb-brand">Design AI Map</span>
           <div class="gnb-end">
@@ -1544,6 +1617,8 @@
         </div>
       </form>
     </div>
+
+    <div class="nav-scrim" id="nav-scrim" hidden></div>
 
     <div class="pbar" id="pbar" hidden>
       <div class="pbar-in" id="pbar-in">
@@ -2045,6 +2120,38 @@ window.GUIDE_PAGES = {"setup":"<div class=\"eyebrow\">INSTALL</div>\n  <h1>설�
     ];
 
     const app = document.getElementById("app");
+
+    /* 모바일 메뉴 서랍 */
+    (function () {
+      const btn = document.getElementById("nav-toggle");
+      const scrim = document.getElementById("nav-scrim");
+      const jobInput = document.getElementById("job-input");
+      const setNav = (open) => {
+        app.classList.toggle("is-nav-open", open);
+        btn.setAttribute("aria-expanded", open ? "true" : "false");
+        btn.setAttribute("aria-label", open ? "메뉴 닫기" : "메뉴 열기");
+        scrim.hidden = false;
+      };
+      btn.addEventListener("click", () => setNav(!app.classList.contains("is-nav-open")));
+      scrim.addEventListener("click", () => setNav(false));
+      sidebar.addEventListener("click", (e) => {
+        if (e.target.closest(".sub-item, .nav-row")) setNav(false);
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") setNav(false);
+      });
+      /* 좁은 화면에서는 안내 문구가 잘린다 */
+      const syncPlaceholder = () => {
+        jobInput.placeholder =
+          window.innerWidth <= 640 ? "직군 선택" : "자신이 속한 직군을 선택해주세요";
+      };
+      const onResize = () => {
+        if (window.innerWidth > 640) setNav(false);
+        syncPlaceholder();
+      };
+      window.addEventListener("resize", onResize);
+      syncPlaceholder();
+    })();
     const form = document.getElementById("gnb");
     const input = document.getElementById("job-input");
     const chipsInner = document.getElementById("role-chips-inner");
