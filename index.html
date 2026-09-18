@@ -17,19 +17,19 @@
        절대주소여야 한다. 주소가 바뀌면 og:url 과 og:image 도 같이 고친다 -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="HIVELAB" />
-  <meta property="og:title" content="HIVELAB Design AI Map" />
+  <meta property="og:title" content="하이브랩 AI Design Map" />
   <meta property="og:description" content="디자인팀 UI 구축 프로세스 가이드. 단계별 흐름, 기준과 규칙, 스킬 9종, 템플릿 8종." />
   <meta property="og:url" content="https://hivelab-ai-site.vercel.app/" />
-  <meta property="og:image" content="https://hivelab-ai-site.vercel.app/assets/kakao.jpg" />
-  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image" content="https://hivelab-ai-site.vercel.app/assets/kakao.png" />
+  <meta property="og:image:type" content="image/png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="HIVELAB Design AI Map" />
+  <meta property="og:image:alt" content="하이브랩 AI Design Map" />
   <meta property="og:locale" content="ko_KR" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="HIVELAB Design AI Map" />
+  <meta name="twitter:title" content="하이브랩 AI Design Map" />
   <meta name="twitter:description" content="디자인팀 UI 구축 프로세스 가이드. 단계별 흐름, 기준과 규칙, 스킬 9종, 템플릿 8종." />
-  <meta name="twitter:image" content="https://hivelab-ai-site.vercel.app/assets/kakao.jpg" />
+  <meta name="twitter:image" content="https://hivelab-ai-site.vercel.app/assets/kakao.png" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <style>
     :root {
@@ -80,7 +80,11 @@
        #app 은 아래에서 100dvh 로 두니까 버튼과 바는 툴바 위에 그대로 있다 */
     html, body {
       height: 100vh;
-      height: 100lvh;
+      /* 100lvh 로 딱 맞추면 기기에 따라 바닥에 사진이 안 닿는 띠가 남는다.
+         조금 더 줘서 화면 끝을 넘기게 한다. 넘친 만큼은 안 보인다.
+         더 키울수록 사진이 확대되니 홈 인디케이터를 덮을 만큼만 준다.
+         #app 은 100dvh 그대로라 버튼과 바 위치는 그대로다 */
+      height: calc(100lvh + 60px);
     }
 
     /* 사파리 상태바 자리를 칠하는 색. 그 자리에는 사진을 못 그리고 색만 들어간다.
